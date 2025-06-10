@@ -1,0 +1,7 @@
+# Ignorar arquivos .gitkeep
+*.gitkeep
+
+# Ignorar pastas __pycache__ e arquivos .pyc
+__pycache__/
+**/__pycache__/
+*.pyc
