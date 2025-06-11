@@ -11,6 +11,7 @@
 - Python (backend)
 - HTML (interface)
 - Modelo de linguagem: [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct)
+- MongoDB (armazenamento de dados)
 
 ---
 
@@ -31,6 +32,7 @@ source venv/bin/activate
 pip install flask
 pip install transformers
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install pymongo
 pip install accelerate
 ```
 
