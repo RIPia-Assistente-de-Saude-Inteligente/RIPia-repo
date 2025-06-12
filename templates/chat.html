@@ -11,10 +11,10 @@
         <h2>Nosso objetivo é fazer você descansar em paz!!</h2>
         <div id="chat-box" class="chat-box"></div>
         <div class="input-area">
+            <div id="loading" class="spinner"></div>
             <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
-            <button onclick="sendMessage()">Enviar</button>
+            <button id="send-button" onclick="sendMessage()">Enviar</button>
         </div>
-        <div id="loading" class="spinner" style="display:none;"></div>
     </div>
     <script src="{{ url_for('static', filename='ch_script.js') }}"></script>
 </body>

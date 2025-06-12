@@ -54,10 +54,14 @@ def agendar():
     ]
 
     def validar_campo(campo, valor):
-        if campo == "especialidade":
+        if valor == "sair":
+            session.pop('step', None)
+            session.pop('dados', None)
+            return "Agendamento cancelado. Você saiu do processo."
+        if campo.lower == "especialidade":
             if not especialidades.find_one({"nome": valor}):
                 return f"Especialidade '{valor}' não encontrada.\nOpções:\n{listar_opcoes(especialidades)}"
-        if campo == "exame":
+        if campo.lower == "exame":
             if valor.lower() != 'nenhum' and not exames.find_one({"nome": valor}):
                 return f"Exame '{valor}' não encontrado.\nOpções:\n{listar_opcoes(exames)}\nOu digite 'nenhum'."
         if campo == "data":
@@ -80,13 +84,48 @@ def agendar():
                 return "Nome muito curto. Informe seu nome completo."
         return None
 
+    def datas_disponiveis(especialidade):
+        resultados = horarios.find(
+            {
+                "especialidade": especialidade,
+                "disponivel": True
+            },
+            {
+                "_id": 0,
+                "data": 1
+            }
+        )
+        # Extrair, normalizar e remover duplicatas
+        datas_unicas = sorted({item["data"] for item in resultados})
+
+        # Opcional: converter datas para formato DD/MM/AAAA, caso estejam em ISO (AAAA-MM-DD)
+        try:
+            datas_formatadas = [
+                datetime.strptime(data, "%Y-%m-%d").strftime("%d/%m/%Y")
+                for data in datas_unicas
+            ]
+        except ValueError:
+            # Se já estiver no formato correto ou misturado, retorna como está
+            datas_formatadas = list(datas_unicas)
+
+        return datas_formatadas
+
     def obter_opcoes_para(campo):
         if campo == "especialidade":
             return f"\nOpções:\n{listar_opcoes(especialidades)}"
-        if campo == "exame":
-            return f"\nOpções:\n{listar_opcoes(exames)}\nOu digite 'nenhum'."
+
+        if campo == "data":
+            especialidade = dados.get("especialidade")
+            if especialidade:
+                datas = datas_disponiveis(especialidade)
+                if datas:
+                    return f"\nDatas disponíveis para {especialidade}:\n" + ", ".join(datas)
+                else:
+                    return f"\nNenhuma data disponível para a especialidade {especialidade}."
+            else:
+                return "\nEscolha uma especialidade primeiro."
+
         if campo == "hora":
-            # Exemplo de função fictícia para horários disponíveis
             especialidade = dados.get("especialidade")
             data = dados.get("data")
             if especialidade and data:
@@ -94,9 +133,13 @@ def agendar():
                 if horarios:
                     return f"\nHorários disponíveis para {especialidade} em {data}:\n" + ", ".join(horarios)
                 else:
-                    return "\nNenhum horário disponível para a data e especialidade escolhidas."
+                    return f"\nNenhum horário disponível para {especialidade} em {data}."
             else:
-                return ""
+                return "\nEscolha a especialidade e a data primeiro."
+
+        if campo == "exame":
+            return f"\nOpções:\n{listar_opcoes(exames)}\nOu digite 'nenhum'."
+
         return ""
 
     # Função fictícia para exemplo. Implemente conforme sua lógica de negócio.

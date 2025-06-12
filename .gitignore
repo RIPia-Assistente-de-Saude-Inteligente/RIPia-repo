@@ -1,7 +1,23 @@
 # Ignorar arquivos .gitkeep
 *.gitkeep
 
-# Ignorar pastas __pycache__ e arquivos .pyc
+# Ignorar cache do Python
 __pycache__/
 **/__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Ignorar ambientes virtuais
+venv/
+.venv/
+
+# Ignorar arquivos do hugging_face
+hf/
+
+# Ignorar dados de modelos e downloads do Hugging Face
+hugging_face/
+
+# Ignorar configurações de IDEs
+.idea/
+.vscode/

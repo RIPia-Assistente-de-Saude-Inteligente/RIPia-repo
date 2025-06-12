@@ -15,7 +15,7 @@ def chat():
     if user_message in ["marcar consulta", "agendar", "agendar consulta"]:
         session['step'] = 0
         session['dados'] = {}
-        return jsonify({'response': "Digite seu nome:"})
+        return jsonify({'response': 'Digite seu nome:\n(Digite "sair" para sair do agendamento 😊)'})
 
     if 'step' in session:
         from controller.agendamento_controller import agendar

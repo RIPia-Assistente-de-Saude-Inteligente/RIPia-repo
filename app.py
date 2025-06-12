@@ -4,9 +4,10 @@ from controller.agendamento_controller import agendamento_bp
 from controller.chat_controller import chat_bp
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+import secrets
 
 app = Flask(__name__)
-app.secret_key = 'secret_key_for_session_management'
+app.secret_key = secrets.token_hex(32)
 
 model_ready = False
 model = None
@@ -14,9 +15,9 @@ tokenizer = None
 
 def load_model():
     global model, tokenizer, model_ready
-    model_name = "Qwen/Qwen2.5-0.5B-Instruct"
-    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, device_map="auto")
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model_path = "./hf/qwen-0.5b"
+    model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16, device_map="auto")
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     model_ready = True
     # Store in app config for blueprint access
     app.config['model'] = model
