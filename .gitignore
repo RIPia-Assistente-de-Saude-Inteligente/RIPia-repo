@@ -1,5 +1,6 @@
 # Ignorar arquivos .gitkeep
 *.gitkeep
+clinica.db
 
 # Ignorar cache do Python
 __pycache__/

@@ -16,8 +16,8 @@ source "$VENV_DIR/bin/activate"
 echo "Instalando dependências..."
 pip install --upgrade pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-pip install pymongo
 pip install flask transformers accelerate huggingface_hub
+pip install sqlalchemy
 # baixa o modelo do Hugging Face
 echo "Baixando modelo do Hugging Face..."
 python baixar_modelo.py
