@@ -90,11 +90,30 @@ def validar_campo(campo, valor, dados):
             if valor.lower() != 'nenhum' and not db.query(Exame).filter(func.lower(Exame.nome) == valor.lower()).first():
                 return f"Exame '{valor}' não encontrado.\nOpções:\n{listar_opcoes(Exame)}\nOu digite 'nenhum'."
 
-        if campo == "data" and not validar_data(valor):
-            return "Data inválida. Informe no formato DD/MM/AAAA."
+        if campo == "data":
+            if not validar_data(valor):
+                return "Data inválida. Informe no formato DD/MM/AAAA."
 
-        if campo == "hora" and not validar_hora(valor):
-            return "Horário inválido. Informe no formato HH:MM."
+            especialidade = dados.get("especialidade")
+            if especialidade:
+                datas_disp = datas_disponiveis(especialidade)
+                if valor not in datas_disp:
+                    return f"A data '{valor}' não está disponível para a especialidade {especialidade.title()}.\n Informe uma das datas disponíveis: {', '.join(datas_disp)}"
+            else:
+                return "Você deve escolher uma especialidade antes da data."
+
+        if campo == "hora":
+            if not validar_hora(valor):
+                return "Horário inválido. Informe no formato HH:MM."
+
+            especialidade = dados.get("especialidade")
+            data = dados.get("data")
+            if especialidade and data:
+                horarios_disp = horarios_disponiveis(especialidade, data)
+                if valor not in horarios_disp:
+                    return f"O horário '{valor}' não está disponível para {especialidade.title()} no dia {data}. \n Informe um dos horário disponíveis: {', '.join(horarios_disp)}"
+            else:
+                return "Você deve escolher a especialidade e a data antes do horário."
 
         if campo == "confirmar" and valor.lower() not in ['sim', 'não', 'nao']:
             return "Responda 'sim' para confirmar ou 'não' para cancelar."
