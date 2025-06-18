@@ -1,5 +1,6 @@
-from models.db import Paciente, Agendamento, engine
+from models.db import Paciente, Agendamento, Horario, engine
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 def process_agendamento(dados):
     try:
@@ -18,7 +19,21 @@ def process_agendamento(dados):
                 db.commit()
                 db.refresh(paciente)
 
-            # 3. Criar agendamento
+            # 3. Marcar horário como indisponível
+            horario = db.query(Horario).filter(
+                func.lower(Horario.especialidade) == dados['especialidade'].lower(),
+                Horario.data == dados['data'],
+                Horario.hora == dados['hora'],
+                Horario.disponivel == True
+            ).first()
+
+            if not horario:
+                return {'erro': 'Horário já foi reservado ou é inválido. Por favor, escolha outro.'}
+
+            horario.disponivel = False
+            db.commit()
+
+            # 4. Criar agendamento
             novo_agendamento = Agendamento(
                 paciente_id=paciente.id,
                 especialidade=dados['especialidade'],
@@ -29,7 +44,7 @@ def process_agendamento(dados):
             db.add(novo_agendamento)
             db.commit()
 
-            # 4. Retorno
+            # 5. Retorno
             resumo = (
                 f"Paciente: {paciente.nome}\n"
                 f"Telefone: {paciente.telefone}\n"
