@@ -3,46 +3,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
     input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
-            event.preventDefault(); // Evita quebra de linha
-            sendMessage(); // Chama a função de envio
+            event.preventDefault();
+            sendMessage();
         }
     });
 });
 
-function sendMessage() {
-    const input = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-    const message = input.value.trim();
-    if (!message) return;
-
-    // Desativa botão e campo
-    sendButton.disabled = true;
-    input.disabled = true;
-
+function appendMessage(sender, message) {
     const chatBox = document.getElementById('chat-box');
-    chatBox.innerHTML += `<div class="user-msg"><b>You:</b> ${message}</div>`;
-    input.value = '';
+    const messageElement = document.createElement('div');
+
+    if (sender === 'user') {
+        messageElement.classList.add('user-msg');
+        messageElement.innerHTML = `<b>Você:</b> ${message}`;
+    } else {
+        messageElement.classList.add('ia-msg');
+        messageElement.innerHTML = `<b>RIPia:</b> ${message}`;
+    }
+
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showOptions(options) {
+    const optionsArea = document.getElementById('options-area');
+    optionsArea.innerHTML = '';  // Limpa opções anteriores
+
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.classList.add('option-button');
+        button.innerText = option;
+        button.onclick = () => {
+            appendMessage('user', option);
+            sendMessage(option);
+        };
+        optionsArea.appendChild(button);
+    });
+}
+
+function sendMessage(userMessage = null) {
+    const inputField = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const message = userMessage || inputField.value.trim();
+
+    if (message === '') return;
+
+    if (!userMessage) {
+        appendMessage('user', message);
+    }
+
+    inputField.value = '';
+    inputField.disabled = true;
+    sendButton.disabled = true;
     showLoading(true);
 
     fetch('/chat', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: message})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
     })
     .then(response => response.json())
     .then(data => {
         const resposta = data.response || data.error || "Erro inesperado.";
-        chatBox.innerHTML += `<div class="ia-msg"><b>AI:</b> ${resposta}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
+        appendMessage('bot', resposta);
+
+        if (data.options) {
+            showOptions(data.options);
+        } else {
+            document.getElementById('options-area').innerHTML = '';
+        }
     })
     .catch(() => {
-        chatBox.innerHTML += `<div class="ia-msg"><b>AI:</b> Ocorreu um erro. Tente novamente.</div>`;
+        appendMessage('bot', 'Ocorreu um erro. Tente novamente.');
     })
     .finally(() => {
-        // Reativa botão e campo
+        inputField.disabled = false;
         sendButton.disabled = false;
-        input.disabled = false;
-        input.focus();
+        inputField.focus();
         showLoading(false);
     });
 }
@@ -55,3 +92,4 @@ function showLoading(show) {
         spinner.classList.remove('active');
     }
 }
+

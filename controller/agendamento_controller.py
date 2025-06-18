@@ -131,10 +131,10 @@ def validar_campo(campo, valor, dados):
 
 @agendamento_bp.route('/agendar', methods=['POST'])
 def agendar():
-    session.setdefault('step', 0)
+    session.setdefault('step_agendamento', 0)
     session.setdefault('dados', {})
 
-    step = session['step']
+    step = session['step_agendamento']
     dados = session['dados']
     user_message = request.json['message'].strip()
 
@@ -185,12 +185,42 @@ def agendar():
         else:
             dados[campo_atual] = user_message
 
-        session['step'] = step + 1
+        session['step_agendamento'] = step + 1
         session['dados'] = dados
 
         proxima_pergunta = perguntas[step + 1]
-        opcoes = obter_opcoes_para(campos[step + 1], dados)
-        return jsonify({'response': f"{proxima_pergunta}{opcoes}"})
+        texto_opcoes = obter_opcoes_para(campos[step + 1], dados)
+
+        # Monta lista de opções reais para o front
+        options_list = []
+
+        if campos[step + 1] == "especialidade":
+            with Session(engine) as db:
+                options_list = [item.nome.title() for item in db.query(Especialidade).all()]
+
+        elif campos[step + 1] == "exame":
+            with Session(engine) as db:
+                options_list = [item.nome.title() for item in db.query(Exame).all()]
+            options_list.append("Nenhum")
+
+        elif campos[step + 1] == "data":
+            especialidade = dados.get("especialidade")
+            if especialidade:
+                options_list = datas_disponiveis(especialidade)
+
+        elif campos[step + 1] == "hora":
+            especialidade = dados.get("especialidade")
+            data = dados.get("data")
+            if especialidade and data:
+                options_list = horarios_disponiveis(especialidade, data)
+
+        elif campos[step + 1] == "confirmar":
+            options_list = ["Sim", "Não"]
+
+        return jsonify({
+            'response': f"{proxima_pergunta}{texto_opcoes}",
+            'options': options_list
+        })
 
     elif step == len(campos) - 1:
         campo_atual = campos[step]
@@ -206,9 +236,10 @@ def agendar():
         else:
             resposta = "Agendamento cancelado."
 
-        session.pop('step', None)
+        session.pop('step_agendamento', None)
         session.pop('dados', None)
+        session['step'] = 'menu_principal'  # Volta o fluxo global ao menu
 
-        return jsonify({'response': resposta.title()})
+        return jsonify({'response': resposta.title(), 'options': ['Voltar ao Menu Principal']})
 
     return jsonify({'response': "Ocorreu um erro no fluxo de agendamento. Por favor, reinicie."})
