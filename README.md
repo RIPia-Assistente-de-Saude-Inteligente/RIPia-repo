@@ -11,7 +11,7 @@
 - Python (backend)
 - HTML (interface)
 - Modelo de linguagem: [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct)
-- MongoDB (armazenamento de dados)
+- SQLite (armazenamento de dados)
 
 ---
 
@@ -25,22 +25,19 @@ Este projeto utiliza o modelo **Qwen2.5-0.5B-Instruct**, um modelo de linguagem 
 
 ### Descrição dos requisitos
 
-```bibtex
-python3 -m venv venv
-source venv/bin/activate
-
-pip install flask
-pip install transformers
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-pip install pymongo
-pip install accelerate
-```
+Únicos requisitos são: uma maquina com Python 3 ou superior e possuir conexão com internet.
 
 ### Executando o projeto
 
+No terminal:
+
 ```bibtex
-python app.py
+./start.sh
 ```
+
+### Utilização do programa
+
+O modelo Qwen responde qualquer mensagem, porém, caso seja enviado no chat: "marcar consulta", "agendar" ou "agendar consulta" (sem as aspas), o chat entra em modo marcação de consulta, sendo possível terminar as indagações enviando "sair".
 
 ### Citações:
 
