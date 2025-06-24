@@ -21,6 +21,7 @@ function sendMessage() {
 
     const chatBox = document.getElementById('chat-box');
     chatBox.innerHTML += `<div class="user-msg"><b>You:</b> ${message}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight; // Garante scroll após mensagem do usuário
     input.value = '';
     showLoading(true);
 
@@ -31,12 +32,14 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
-        const resposta = data.response || data.error || "Erro inesperado.";
+        let resposta = data.response || data.error || "Erro inesperado.";
+        resposta = resposta.replace(/\n/g, "<br>");
         chatBox.innerHTML += `<div class="ia-msg"><b>AI:</b> ${resposta}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
+        chatBox.scrollTop = chatBox.scrollHeight; // Garante scroll após resposta da IA
     })
     .catch(() => {
         chatBox.innerHTML += `<div class="ia-msg"><b>AI:</b> Ocorreu um erro. Tente novamente.</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
     })
     .finally(() => {
         // Reativa botão e campo
