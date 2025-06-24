@@ -4,12 +4,50 @@
     <meta charset="UTF-8">
     <title>RIPia</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .options-area {
+            margin-top: 10px;
+        }
+
+        .option-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 12px;
+            margin: 3px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .option-button:hover {
+            background-color: #0056b3;
+        }
+
+        .message.user {
+            text-align: right;
+            color: blue;
+        }
+
+        .message.bot {
+            text-align: left;
+            color: green;
+        }
+
+        .chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>RIPia, seu assistente médico</h1>
         <h2>Nosso objetivo é fazer você descansar em paz!!</h2>
         <div id="chat-box" class="chat-box"></div>
+        <div id="options-area" class="options-area"></div>
         <div class="input-area">
                 <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
                 <div class="button-spinner-wrapper">
@@ -21,3 +59,4 @@
     <script src="{{ url_for('static', filename='ch_script.js') }}"></script>
 </body>
 </html>
+

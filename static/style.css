@@ -148,3 +148,28 @@ button:hover {
     margin: 10px 0;
     color: #333333;
 }
+.options-area {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.option-button {
+    background-color: #40e0d0; /* Turquoise green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.option-button:hover {
+    background-color: #2e8b57; /* A darker shade of green */
+}
+
