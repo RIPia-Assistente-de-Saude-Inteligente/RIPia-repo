@@ -55,6 +55,7 @@ function sendMessage(userMessage = null) {
     inputField.value = '';
     inputField.disabled = true;
     sendButton.disabled = true;
+  
     showLoading(true);
 
     fetch('/chat', {
@@ -64,6 +65,7 @@ function sendMessage(userMessage = null) {
     })
     .then(response => response.json())
     .then(data => {
+
         const resposta = data.response || data.error || "Erro inesperado.";
         appendMessage('bot', resposta);
 
@@ -85,11 +87,15 @@ function sendMessage(userMessage = null) {
 }
 
 function showLoading(show) {
-    const spinner = document.getElementById('loading');
+    const spinner = document.getElementById('loading'); // correto spinner
+    const button = document.getElementById('send-button');
+
     if (show) {
-        spinner.classList.add('active');
+        button.style.display = "none";      // esconde o botão
+        spinner.classList.add('active');    // mostra o spinner
     } else {
-        spinner.classList.remove('active');
+        button.style.display = "inline-block"; // mostra o botão
+        spinner.classList.remove('active');    // esconde o spinner
     }
 }
 

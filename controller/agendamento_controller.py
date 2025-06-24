@@ -8,6 +8,14 @@ from datetime import datetime
 
 agendamento_bp = Blueprint('agendamento', __name__)
 
+import unicodedata
+
+def remover_acentos(txt):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', txt)
+        if unicodedata.category(c) != 'Mn'
+    )
+
 def validar_data(data_texto):
     try:
         datetime.strptime(data_texto, "%d/%m/%Y")
@@ -83,7 +91,9 @@ def validar_campo(campo, valor, dados):
             return "Agendamento cancelado. Você saiu do processo."
 
         if campo == "especialidade":
-            if not db.query(Especialidade).filter(func.lower(Especialidade.nome) == valor.lower()).first():
+            valor_normalizado = remover_acentos(valor.lower())
+            especialidades = [remover_acentos(e.nome.lower()) for e in db.query(Especialidade).all()]
+            if valor_normalizado not in especialidades:
                 return f"Especialidade '{valor}' não encontrada.\nOpções:\n{listar_opcoes(Especialidade)}"
 
         if campo == "exame":
