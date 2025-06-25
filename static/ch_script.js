@@ -13,17 +13,22 @@ function appendMessage(sender, message) {
     const chatBox = document.getElementById('chat-box');
     const messageElement = document.createElement('div');
 
+    // Converte \n em <br> para exibir quebras de linha
+    const formattedMessage = message.replace(/\n/g, '<br>');
+
     if (sender === 'user') {
         messageElement.classList.add('user-msg');
-        messageElement.innerHTML = `<b>Você:</b> ${message}`;
+        messageElement.innerHTML = `<b>Você:</b> ${formattedMessage}`;
     } else {
         messageElement.classList.add('ia-msg');
-        messageElement.innerHTML = `<b>RIPia:</b> ${message}`;
+        messageElement.innerHTML = `<b>RIPia:</b> ${formattedMessage}`;
     }
 
     chatBox.appendChild(messageElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
+ // Garante o scroll após renderizar a mensagem
+    setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 0);}
 
 function showOptions(options) {
     const optionsArea = document.getElementById('options-area');
